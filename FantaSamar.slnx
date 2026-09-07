@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="FantaSamar/FantaSamar.esproj">
+    <Build />
+    <Deploy />
+  </Project>
+</Solution>

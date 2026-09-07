@@ -1,0 +1,32 @@
+<!-- Team Detail Container -->
+<div class="team-detail-container">
+  <!-- Header -->
+  <div class="team-header">
+    <button (click)="goBack()" class="back-button">← Indietro</button>
+    <h1>{{ team?.name }}</h1>
+    <div class="total-points">
+      Punti Totali: <span class="points-value">{{ getTotalTeamPoints() }}</span>🧅
+    </div>
+  </div>
+
+  <!-- Read-only Banner -->
+  <div *ngIf="!isOwner" class="read-only-banner">
+    <span class="banner-icon">🔒</span>
+    <span class="banner-text">Questa è una squadra di un altro partecipante. Puoi solo visualizzarla.</span>
+  </div>
+
+  <div class="team-content">
+    <!-- Members List -->
+    <div class="members-panel">
+      <h2>Membri della Squadra</h2>
+      <div class="members-list-simple">
+        <div *ngFor="let memberId of team?.memberIds" class="member-item">
+          <div class="member-info">
+            <span class="member-name">{{ getMemberName(memberId) }}</span>
+            <span class="member-points">{{ team?.memberPoints?.find(m => m.memberId === memberId)?.totalPoints }}🧅</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

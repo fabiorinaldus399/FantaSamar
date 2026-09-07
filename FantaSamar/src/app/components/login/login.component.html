@@ -1,0 +1,108 @@
+<!-- Register Success Overlay -->
+<div *ngIf="showRegisterSuccessOverlay" class="register-success-overlay">
+  <div class="register-success-overlay-content">
+    <span class="register-success-icon">🧅</span>
+    <p>Registrazione completata! Effettua l'accesso</p>
+    <button (click)="closeRegisterSuccessOverlay()" class="submit-button">
+      Ok
+    </button>
+  </div>
+</div>
+
+<!-- Login/Register Container -->
+<div class="auth-container">
+  <div class="auth-box">
+    <h1>🎵 FantaSAMAR 🧅</h1>
+
+    <!-- Tab Selection -->
+    <div class="auth-tabs">
+      <button
+        [class.active]="isLogin"
+        (click)="toggleMode()"
+        class="tab-button"
+      >
+        Login
+      </button>
+      <button
+        [class.active]="!isLogin"
+        (click)="toggleMode()"
+        class="tab-button"
+      >
+        Registrazione
+      </button>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="error" class="error-message">
+      {{ error }}
+    </div>
+
+    <!-- Form -->
+    <form (ngSubmit)="onSubmit()" class="auth-form">
+      <!-- Username -->
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input
+          id="username"
+          type="text"
+          [(ngModel)]="username"
+          name="username"
+          placeholder="Inserisci il tuo username"
+          class="form-input"
+          autocomplete="username"
+          required
+        />
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          id="password"
+          type="password"
+          [(ngModel)]="password"
+          name="password"
+          placeholder="Inserisci la tua password"
+          class="form-input"
+          [attr.autocomplete]="isLogin ? 'current-password' : 'new-password'"
+          required
+        />
+      </div>
+
+      <!-- Confirm Password (Register Only) -->
+      <div *ngIf="!isLogin" class="form-group">
+        <label for="confirmPassword">Conferma Password</label>
+        <input
+          id="confirmPassword"
+          type="password"
+          [(ngModel)]="confirmPassword"
+          name="confirmPassword"
+          placeholder="Conferma la password"
+          class="form-input"
+          required
+        />
+      </div>
+
+      <!-- Remember Device (Login Only) -->
+      <div *ngIf="isLogin" class="form-group remember-device-group">
+        <label class="remember-device-label">
+          <input
+            type="checkbox"
+            [(ngModel)]="rememberDevice"
+            name="rememberDevice"
+          />
+          Ricorda questo dispositivo
+        </label>
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        class="submit-button"
+        [disabled]="loading"
+      >
+        {{ loading ? 'Caricamento...' : (isLogin ? 'Accedi' : 'Registrati') }}
+      </button>
+    </form>
+  </div>
+</div>

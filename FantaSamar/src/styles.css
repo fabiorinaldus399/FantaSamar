@@ -1,0 +1,96 @@
+/* You can add global styles to this file, and also import other style files */
+
+:root {
+  color-scheme: dark;
+
+  /* Brand / accent */
+  --accent-1: #7c8ff5;
+  --accent-2: #8b5fc9;
+  --accent-gradient: linear-gradient(135deg, var(--accent-1) 0%, var(--accent-2) 100%);
+  --accent-soft: rgba(124, 143, 245, 0.16);
+
+  /* Backgrounds */
+  --bg-page: #12131c;
+  --bg-page-gradient: linear-gradient(135deg, #1b1c2e 0%, #2a1f3d 100%);
+  --bg-surface: #1b1d2b;
+  --bg-surface-alt: #22243570;
+  --bg-surface-raised: #262a3d;
+  --bg-hover: #2c2f45;
+
+  /* Text */
+  --text-primary: #f2f3f8;
+  --text-secondary: #b3b6c9;
+  --text-muted: #7d81a0;
+  --text-on-accent: #ffffff;
+
+  /* Borders */
+  --border-color: #363a52;
+  --border-color-strong: #454a6b;
+
+  /* Semantic */
+  --color-success: #51cf66;
+  --color-success-strong: #2f9e44;
+  --color-danger: #ff6b6b;
+  --color-danger-strong: #e03131;
+  --color-warning: #ffc94d;
+  --color-warning-strong: #f59f00;
+  --color-info: #4dabf7;
+
+  /* Shadows */
+  --shadow-soft: 0 5px 20px rgba(0, 0, 0, 0.35);
+  --shadow-medium: 0 10px 40px rgba(0, 0, 0, 0.5);
+  --shadow-accent: 0 4px 15px rgba(124, 143, 245, 0.35);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--bg-page);
+  color: var(--text-primary);
+}
+
+appbar-root {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+button {
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-page);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color-strong);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-1);
+}
+
+::selection {
+  background: var(--accent-soft);
+  color: var(--text-primary);
+}

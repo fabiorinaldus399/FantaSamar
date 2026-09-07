@@ -1,0 +1,323 @@
+<!-- Dashboard Container -->
+<div class="dashboard-container">
+  <!-- Apply Celebration Overlay -->
+  <div *ngIf="showApplyCelebration" class="apply-celebration-overlay">
+    <div class="apply-celebration-content">
+      <span class="apply-celebration-icon">🧅🎉🧅</span>
+      <span class="apply-celebration-text">Ellolle!</span>
+    </div>
+  </div>
+
+  <!-- Notify Overlay -->
+  <div *ngIf="notifyMessage" class="notify-overlay">
+    <div class="notify-overlay-content">
+      <p>{{ notifyMessage }}</p>
+      <button (click)="closeNotify()" class="apply-button">
+        Ok
+      </button>
+    </div>
+  </div>
+
+  <!-- Delete Action Confirmation Overlay -->
+  <div *ngIf="actionPendingDeleteId" class="delete-confirm-overlay">
+    <div class="delete-confirm-overlay-content">
+      <p>Eliminare questo bonus?</p>
+      <div class="delete-confirm-buttons">
+        <button (click)="confirmDeleteAction()" class="delete-button">
+          Sì, elimina
+        </button>
+        <button (click)="cancelDeleteAction()" class="apply-button">
+          Annulla
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <div class="dashboard-header">
+    <h1>🎵 FantaSAMAR 🧅</h1>
+    <div class="user-info">
+      <span>Ciao, {{ user?.username }}!</span>
+      <button (click)="logout()" class="logout-button">Logout</button>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="dashboard-content">
+    <!-- Create Team Section -->
+    <div class="create-team-section">
+      <button
+        (click)="toggleCreateTeamForm()"
+        class="create-team-button"
+        [disabled]="!showCreateTeamForm && teams.length >= maxTeamsPerUser"
+      >
+        {{ showCreateTeamForm ? 'Annulla' : 'Crea Nuova Squadra' }}
+      </button>
+
+      <p *ngIf="!showCreateTeamForm && teams.length >= maxTeamsPerUser" class="error-message">
+        Hai già raggiunto il numero massimo di {{ maxTeamsPerUser }} squadre
+      </p>
+
+      <div *ngIf="showCreateTeamForm" class="create-team-form">
+        <div *ngIf="createTeamError" class="error-message">
+          {{ createTeamError }}
+        </div>
+
+        <div class="form-group">
+          <label for="teamName">Nome della Squadra</label>
+          <input
+            id="teamName"
+            type="text"
+            [(ngModel)]="newTeamName"
+            placeholder="Inserisci il nome della squadra"
+            class="form-input"
+          />
+        </div>
+
+        <div class="members-selection">
+          <h3>Seleziona 4 Membri ({{ selectedMembers.length }}/4)</h3>
+          <div class="members-grid">
+            <div
+              *ngFor="let member of members"
+              [class.selected]="isMemberSelected(member.id)"
+              class="member-card"
+              (click)="toggleMemberSelection(member.id)"
+            >
+              <div class="member-avatar">{{ member.name.charAt(0) }}</div>
+              <h4>{{ member.name }}</h4>
+              <p>{{ member.role }}</p>
+            </div>
+          </div>
+        </div>
+
+        <button
+          (click)="createTeam()"
+          class="create-button"
+          [disabled]="selectedMembers.length !== 4"
+        >
+          Crea Squadra
+        </button>
+      </div>
+    </div>
+
+    <!-- Teams List -->
+    <div class="teams-section">
+      <h2>Le Mie Squadre</h2>
+
+      <div *ngIf="teams.length === 0" class="no-teams-message">
+        <p>Non hai ancora creato nessuna squadra. Creane una per iniziare!</p>
+      </div>
+
+      <div *ngIf="teams.length > 0" class="teams-grid">
+        <div *ngFor="let team of teams" class="team-card">
+          <div class="team-card-header">
+            <h3>{{ team.name }}</h3>
+            <span class="team-points">{{ getTotalTeamPoints(team) }}🧅</span>
+          </div>
+          <div class="team-members">
+            <div *ngFor="let memberId of team.memberIds" class="team-member-tag">
+              {{ getMemberName(memberId) }}
+            </div>
+          </div>
+          <div class="team-actions" *ngIf="teamPendingDeleteId !== team.id">
+            <button (click)="viewTeamDetails(team.id)" class="action-button primary">
+              Dettagli
+            </button>
+            <button (click)="deleteTeam(team.id)" class="action-button danger">
+              Elimina
+            </button>
+          </div>
+          <div class="delete-confirm-inline" *ngIf="teamPendingDeleteId === team.id">
+            <p>Eliminare questa squadra?</p>
+            <div class="delete-confirm-buttons">
+              <button (click)="confirmDeleteTeam()" class="delete-button">
+                Sì, elimina
+              </button>
+              <button (click)="cancelDeleteTeam()" class="apply-button">
+                Annulla
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Member Selection Button -->
+    <div class="member-selection-button-section">
+      <button (click)="openMemberSelectionModal()" class="select-member-button">
+        👤 Applica BONUS
+      </button>
+    </div>
+
+    <!-- Member Selection Section -->
+    <div *ngIf="showMemberSelectionModal" class="member-selection-section">
+      <!-- Main Content -->
+
+        <!-- Members Selection Panel -->
+        <div class="members-selection">
+          <h3>Seleziona un Membro</h3>
+          <div class="members-grid">
+            <div
+              *ngFor="let member of members"
+              [class.selected]="selectedMemberForActions?.id === member.id"
+              class="member-card"
+              (click)="selectMemberForActions(member)"
+            >
+              <div class="member-avatar">{{ member.name.charAt(0) }}</div>
+              <h4>{{ member.name }}</h4>
+              <p>{{ member.totalPoints || 0 }} 🧅</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Selected Member Section -->
+        <div *ngIf="selectedMemberForActions" class="selected-member-panel">
+          <h3>{{ selectedMemberForActions.name }} - Gestione Bonus</h3>
+
+          <!-- Action Form Toggle Button -->
+          <button (click)="toggleActionForm()" class="create-action-button">
+            {{ showActionForm ? 'Annulla' : 'Crea Nuovo Bonus' }}
+          </button>
+
+          <!-- Create Action Form -->
+          <div *ngIf="showActionForm" class="create-action-form">
+            <div class="form-group">
+              <label for="actionName">Nome Bonus</label>
+              <input
+                id="actionName"
+                type="text"
+                [(ngModel)]="newActionName"
+                placeholder="Es: Goal, Assist, Cartellino..."
+                class="form-input"
+              />
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="actionType">Tipo</label>
+                <select id="actionType" [(ngModel)]="newActionType" class="form-input">
+                  <option value="positive">Positivo (+)</option>
+                  <option value="negative">Negativo (-)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="actionPoints">Cipolle</label>
+                <input
+                  id="actionPoints"
+                  type="number"
+                  [(ngModel)]="newActionPoints"
+                  min="0"
+                  class="form-input"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="actionScope">Ambito</label>
+                <select id="actionScope" [(ngModel)]="newActionScope" class="form-input">
+                  <option value="single">Del Singolo</option>
+                  <option value="group">Di Gruppo</option>
+                </select>
+              </div>
+            </div>
+
+            <button (click)="createAction()" class="create-button">
+              Crea Bonus
+            </button>
+          </div>
+
+          <!-- Existing Actions -->
+          <div class="actions-list">
+            <h3>Bonus Disponibili</h3>
+
+            <div *ngIf="actions.length === 0" class="no-actions">
+              <p>Nessun bonus disponibile</p>
+            </div>
+
+            <div *ngIf="actions.length > 0" class="actions-grid">
+              <div
+                *ngFor="let action of actions"
+                [class.positive]="action.points > 0"
+                [class.negative]="action.points < 0"
+                [class.group-action]="action.scope === 'group'"
+                class="action-card"
+              >
+                <h4>{{ action.name }}</h4>
+                <div class="action-scope-badge">
+                  {{ action.scope === 'single' ? '👤 Del Singolo' : '👥 Di Gruppo' }}
+                </div>
+                <div class="action-info">
+                  <span class="action-points">{{ action.points > 0 ? '+' : '' }}{{ action.points }} 🧅</span>
+                  <div class="action-buttons">
+                    <button
+                      (click)="applyAction(action)"
+                      class="apply-button"
+                      [disabled]="action.scope === 'single' && !selectedMemberForActions"
+                      title="Applica questo bonus"
+                    >
+                      Applica
+                    </button>
+                    <button
+                      (click)="deleteAction(action.id)"
+                      class="delete-button"
+                      title="Elimina bonus"
+                    >
+                      Elimina
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <!-- Leaderboard -->
+    <div class="leaderboard-section">
+      <h2>🏆 Classifica Generale</h2>
+
+      <div *ngIf="leaderboard.length === 0" class="no-teams-message">
+        <p>Nessuna squadra creata ancora.</p>
+      </div>
+
+      <div *ngIf="leaderboard.length > 0" class="leaderboard-container">
+        <div class="leaderboard-table">
+          <div class="leaderboard-header">
+            <div class="rank-col">Pos.</div>
+            <div class="name-col">Squadra</div>
+            <div class="owner-col">Proprietario</div>
+            <div class="points-col">Punti</div>
+          </div>
+
+          <div *ngFor="let entry of leaderboard" class="leaderboard-row" [class.first]="entry.rank === 1" [class.second]="entry.rank === 2" [class.third]="entry.rank === 3">
+            <div class="rank-col">
+              <span class="rank-badge" [class.medal]="entry.rank <= 3">
+                <span *ngIf="entry.rank === 1" class="medal-icon">🥇</span>
+                <span *ngIf="entry.rank === 2" class="medal-icon">🥈</span>
+                <span *ngIf="entry.rank === 3" class="medal-icon">🥉</span>
+                <span *ngIf="entry.rank > 3">{{ entry.rank }}</span>
+              </span>
+            </div>
+            <div class="name-col">
+              <span class="team-name" [class.my-team]="entry.team.userId === user?.id">
+                {{ entry.team.name }}
+                <span *ngIf="entry.team.userId === user?.id" class="my-team-badge">(Mia)</span>
+              </span>
+            </div>
+            <div class="owner-col">
+              {{ entry.ownerName }}
+            </div>
+            <div class="points-col">
+              <span class="points-value">{{ entry.totalPoints }}🧅</span>
+            </div>
+            <div class="leaderboard-action">
+              <button (click)="viewTeamDetails(entry.team.id)" class="view-button">
+                Dettagli
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
