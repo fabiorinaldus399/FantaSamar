@@ -2,6 +2,12 @@ const fs = require('fs');
 const path = require('path');
 const https = require('https');
 const http = require('http');
+
+// Carica le variabili d'ambiente da un file .env (se presente) nella cartella
+// FantaSamar.Server, così PORT/JWT_SECRET/CORS_ORIGIN/SSL_* possono essere
+// definite in un file invece che esportate manualmente ad ogni riavvio.
+require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
+
 const express = require('express');
 const cors = require('cors');
 const { initDatabase } = require('./db');

@@ -149,7 +149,33 @@ npm install --production
 
 ### Variabili d'ambiente
 
-Il backend legge `PORT`, `JWT_SECRET` e `CORS_ORIGIN` dall'ambiente. Crea un file `.env` o esportale direttamente. Esempio con un file `.env` (richiede `dotenv`, oppure impostale come variabili di sistema/servizio):
+Il backend legge `PORT`, `JWT_SECRET`, `CORS_ORIGIN` e, opzionalmente, `SSL_KEY_PATH`/`SSL_CERT_PATH` dall'ambiente. Il modo più semplice per renderle persistenti tra i riavvii è usare un file `.env`: all'avvio (`FantaSamar.Server/src/index.js`) il pacchetto `dotenv` carica automaticamente `FantaSamar.Server/.env`, se presente.
+
+Crea il file partendo dal template incluso nel repository:
+
+```bash
+cd /opt/fantasamar/FantaSamar.Server
+cp .env.example .env
+nano .env
+```
+
+Esempio di contenuto di `.env`:
+
+```
+PORT=3000
+JWT_SECRET=una-chiave-segreta-lunga-e-casuale
+CORS_ORIGIN=https://tuo-dominio.it
+```
+
+**Importante**:
+- `.env` non va mai committato: è già escluso tramite `.gitignore`. Assicurati che i permessi del file siano restrittivi (es. `chmod 600 .env`), perché contiene segreti.
+- Cambia sempre `JWT_SECRET` in produzione (il valore di default nel codice è solo per sviluppo).
+- `CORS_ORIGIN` deve corrispondere all'origine pubblica del frontend (se non impostata, in sviluppo il backend accetta automaticamente le origini `localhost`/`127.0.0.1` e gli IP di rete privata).
+- Se modifichi `.env` dopo l'avvio, riavvia il processo perché venga ricaricato (`pm2 restart fantasamar-server`), dato che le variabili vengono lette una sola volta all'avvio del processo Node.
+
+In produzione il backend rimane in HTTP semplice dietro nginx (che termina la connessione TLS, vedi sezione 6); non è necessario impostare `SSL_KEY_PATH`/`SSL_CERT_PATH`. Se invece vuoi che sia il backend stesso a terminare la connessione HTTPS (ad esempio senza nginx davanti), aggiungi in `.env` `SSL_KEY_PATH` e `SSL_CERT_PATH` con i percorsi dei certificati reali (es. quelli emessi da Certbot in `/etc/letsencrypt/live/tuo-dominio.it/`) e il server si avvierà automaticamente in HTTPS, esattamente come descritto nella sezione 0 per lo sviluppo locale.
+
+**In alternativa a `.env`** puoi impostare le variabili direttamente come variabili d'ambiente di sistema/servizio, ad esempio dentro l'unità systemd di PM2 o esportandole nella shell prima di avviare `pm2`:
 
 ```bash
 export PORT=3000
@@ -157,9 +183,7 @@ export JWT_SECRET="una-chiave-segreta-lunga-e-casuale"
 export CORS_ORIGIN="https://tuo-dominio.it"
 ```
 
-**Importante**: cambia sempre `JWT_SECRET` in produzione (il valore di default nel codice è solo per sviluppo). `CORS_ORIGIN` deve corrispondere all'origine pubblica del frontend (se non impostata, di default il backend accetta solo `https://localhost:4200` e `http://localhost:4200`, utili in sviluppo locale).
-
-In produzione il backend rimane in HTTP semplice dietro nginx (che termina la connessione TLS, vedi sezione 6); non è necessario impostare `SSL_KEY_PATH`/`SSL_CERT_PATH`. Se invece vuoi che sia il backend stesso a terminare la connessione HTTPS (ad esempio senza nginx davanti), imposta `SSL_KEY_PATH` e `SSL_CERT_PATH` con i percorsi dei certificati reali (es. quelli emessi da Certbot in `/etc/letsencrypt/live/tuo-dominio.it/`) e il server si avvierà automaticamente in HTTPS, esattamente come descritto nella sezione 0 per lo sviluppo locale.
+Nota però che le variabili esportate nella shell valgono solo per la sessione corrente: dopo un riavvio del server vanno reimpostate manualmente, a meno di aggiungerle in un file caricato automaticamente (es. `/etc/environment`, un profilo di shell, o un file `.env`/`EnvironmentFile` systemd). Per questo `.env` è l'opzione consigliata per la persistenza tra i riavvii.
 
 ### Avvio con PM2
 
