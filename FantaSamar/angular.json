@@ -74,7 +74,11 @@
           },
           "defaultConfiguration": "development",
           "options": {
-            "port": 52598
+            "port": 52598,
+            "host": "0.0.0.0",
+            "ssl": true,
+            "sslKey": "certs/localhost-key.pem",
+            "sslCert": "certs/localhost-cert.pem"
           }
         },
         "test": {

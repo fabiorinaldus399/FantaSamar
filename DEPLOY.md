@@ -2,6 +2,112 @@
 
 Questa guida spiega come installare ed eseguire il backend (`FantaSamar.Server`, Node.js + Express + SQLite) e il frontend (`FantaSamar`, Angular) su un server Linux (es. Ubuntu 22.04/24.04).
 
+## 0. Sviluppo locale in HTTPS con mkcert
+
+Sia il backend (`FantaSamar.Server/src/index.js`) sia il frontend (`ng serve`, vedi `FantaSamar/angular.json`) sono predisposti per avviarsi automaticamente in **HTTPS** quando trovano dei certificati TLS locali. Per generarli in modo semplice si usa [mkcert](https://github.com/FiloSottile/mkcert), che crea certificati "trusted" dal browser senza dover configurare una CA reale.
+
+### Installazione di mkcert
+
+**Windows (PowerShell, con Chocolatey già installato):**
+
+```powershell
+choco install mkcert -y
+mkcert -install
+```
+
+**Linux (Ubuntu/Debian):**
+
+```bash
+sudo apt install -y libnss3-tools
+curl -JLO "https://dl.filippo.io/mkcert/latest?for=linux/amd64"
+chmod +x mkcert-v*-linux-amd64
+sudo mv mkcert-v*-linux-amd64 /usr/local/bin/mkcert
+mkcert -install
+```
+
+**macOS:**
+
+```bash
+brew install mkcert
+mkcert -install
+```
+
+Il comando `mkcert -install` installa una Certification Authority locale nel tuo browser/OS: è quello che rende i certificati generati "attendibili" senza warning nel browser.
+
+### Generazione dei certificati
+
+Genera due coppie di certificati, uno per il backend e uno per il frontend (puoi anche riutilizzare la stessa coppia in entrambe le cartelle):
+
+```powershell
+cd FantaSamar.Server
+mkdir certs -Force
+mkcert -key-file certs/localhost-key.pem -cert-file certs/localhost-cert.pem localhost 127.0.0.1 ::1
+
+cd ../FantaSamar
+mkdir certs -Force
+mkcert -key-file certs/localhost-key.pem -cert-file certs/localhost-cert.pem localhost 127.0.0.1 ::1
+```
+
+Su Linux/macOS usa `mkdir -p certs` al posto di `mkdir certs -Force`.
+
+I file generati (`certs/localhost-key.pem` e `certs/localhost-cert.pem`) sono esclusi dal repository tramite `.gitignore` e vanno rigenerati su ogni macchina di sviluppo.
+
+### Accesso da altri dispositivi sulla rete locale (es. smartphone, altro PC)
+
+Per aprire l'app da un altro dispositivo sulla stessa rete Wi-Fi/LAN servono 3 accorgimenti:
+
+1. **Trova l'IP locale del PC che esegue backend e frontend**, ad esempio con:
+
+   ```powershell
+   ipconfig   # cerca "Indirizzo IPv4", es. 192.168.1.50
+   ```
+
+2. **Rigenera i certificati includendo anche quell'IP** (oltre a `localhost`), sia per il backend che per il frontend:
+
+   ```powershell
+   cd FantaSamar.Server
+   mkcert -key-file certs/localhost-key.pem -cert-file certs/localhost-cert.pem localhost 127.0.0.1 ::1 192.168.1.50
+
+   cd ../FantaSamar
+   mkcert -key-file certs/localhost-key.pem -cert-file certs/localhost-cert.pem localhost 127.0.0.1 ::1 192.168.1.50
+   ```
+
+   Sostituisci `192.168.1.50` con il tuo IP reale. Se l'IP cambia (es. rete diversa o DHCP), rigenera i certificati con il nuovo indirizzo.
+
+3. **Assicurati che i server ascoltino su tutte le interfacce di rete (`0.0.0.0`) e non solo su `localhost`**:
+   - Il backend (`FantaSamar.Server/src/index.js`) ascolta già su tutte le interfacce di default.
+   - Il frontend è già configurato con `"host": "0.0.0.0"` in `FantaSamar/angular.json` e con lo script `npm start` (`ng serve --host=0.0.0.0`).
+
+   In questo modo, oltre a `https://localhost:4200`, l'app sarà raggiungibile anche da `https://192.168.1.50:4200` (usa il tuo IP).
+
+   Nota: sul dispositivo remoto (es. smartphone) il browser mostrerà un avviso di certificato non attendibile, perché la CA locale creata da `mkcert -install` è installata solo sul PC di sviluppo, non sul dispositivo remoto. Puoi comunque procedere accettando l'eccezione di sicurezza, oppure esportare/installare la CA di mkcert anche sul dispositivo remoto (`mkcert -CAROOT` mostra dove si trova il file `rootCA.pem` da importare).
+
+   Il frontend (`FantaSamar/src/app/config/api.config.ts`) deduce automaticamente l'host dell'API dall'host con cui è stata aperta la pagina (`window.location.hostname`), quindi non serve modificare manualmente l'URL dell'API per l'accesso da rete locale: se apri `https://192.168.1.50:4200`, le chiamate andranno automaticamente a `https://192.168.1.50:3000/api`.
+
+   Per default (senza impostare `CORS_ORIGIN`), il backend accetta automaticamente qualsiasi origine `localhost`/`127.0.0.1` o IP di rete privata (`192.168.x.x`, `10.x.x.x`, `172.16-31.x.x`), quindi non serve configurare nulla lato CORS per l'uso in LAN.
+
+### Avvio in HTTPS
+
+```bash
+# Backend: rileva automaticamente i certificati in FantaSamar.Server/certs/
+cd FantaSamar.Server
+npm run start   # oppure: node src/index.js
+
+# Frontend: ng serve userà i certificati grazie alla configurazione ssl/sslKey/sslCert in angular.json
+cd ../FantaSamar
+npm start
+```
+
+Se i certificati non sono presenti, il backend torna automaticamente in HTTP semplice (utile in produzione, dove HTTPS viene terminato da nginx, vedi sezione 6).
+
+Apri quindi `https://localhost:4200` nel browser: il frontend chiamerà l'API su `https://localhost:3000/api` (vedi `FantaSamar/src/app/config/api.config.ts`).
+
+Se serve un'origine diversa per CORS (es. porta diversa), imposta la variabile d'ambiente `CORS_ORIGIN` (lista separata da virgole) prima di avviare il backend:
+
+```bash
+export CORS_ORIGIN="https://localhost:4200"
+```
+
 ## 1. Prerequisiti
 
 Aggiorna il sistema e installa Node.js (versione 20 LTS o superiore consigliata):
@@ -43,14 +149,17 @@ npm install --production
 
 ### Variabili d'ambiente
 
-Il backend legge `PORT` e `JWT_SECRET` dall'ambiente. Crea un file `.env` o esportale direttamente. Esempio con un file `.env` (richiede `dotenv`, oppure impostale come variabili di sistema/servizio):
+Il backend legge `PORT`, `JWT_SECRET` e `CORS_ORIGIN` dall'ambiente. Crea un file `.env` o esportale direttamente. Esempio con un file `.env` (richiede `dotenv`, oppure impostale come variabili di sistema/servizio):
 
 ```bash
 export PORT=3000
 export JWT_SECRET="una-chiave-segreta-lunga-e-casuale"
+export CORS_ORIGIN="https://tuo-dominio.it"
 ```
 
-**Importante**: cambia sempre `JWT_SECRET` in produzione (il valore di default nel codice è solo per sviluppo).
+**Importante**: cambia sempre `JWT_SECRET` in produzione (il valore di default nel codice è solo per sviluppo). `CORS_ORIGIN` deve corrispondere all'origine pubblica del frontend (se non impostata, di default il backend accetta solo `https://localhost:4200` e `http://localhost:4200`, utili in sviluppo locale).
+
+In produzione il backend rimane in HTTP semplice dietro nginx (che termina la connessione TLS, vedi sezione 6); non è necessario impostare `SSL_KEY_PATH`/`SSL_CERT_PATH`. Se invece vuoi che sia il backend stesso a terminare la connessione HTTPS (ad esempio senza nginx davanti), imposta `SSL_KEY_PATH` e `SSL_CERT_PATH` con i percorsi dei certificati reali (es. quelli emessi da Certbot in `/etc/letsencrypt/live/tuo-dominio.it/`) e il server si avvierà automaticamente in HTTPS, esattamente come descritto nella sezione 0 per lo sviluppo locale.
 
 ### Avvio con PM2
 
@@ -83,7 +192,7 @@ FantaSamar/src/app/config/api.config.ts
 Sostituisci:
 
 ```ts
-export const API_BASE_URL = 'http://localhost:3000/api';
+export const API_BASE_URL = 'https://localhost:3000/api';
 ```
 
 con l'indirizzo pubblico del server, ad esempio:
@@ -142,7 +251,7 @@ server {
 }
 ```
 
-Se usi il path relativo `'/api'` in `api.config.ts`, questa configurazione funziona senza ulteriori modifiche CORS. Se invece usi un dominio/porta diversi per l'API, verifica che `cors()` nel backend (`FantaSamar.Server/src/index.js`) consenta l'origine del frontend.
+Se usi il path relativo `'/api'` in `api.config.ts`, questa configurazione funziona senza ulteriori modifiche CORS. Se invece usi un dominio/porta diversi per l'API, verifica che la variabile `CORS_ORIGIN` nel backend (`FantaSamar.Server/src/index.js`) includa l'origine del frontend.
 
 Abilita il sito e ricarica nginx:
 

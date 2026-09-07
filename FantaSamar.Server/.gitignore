@@ -1,0 +1,14 @@
+# Node
+/node_modules
+npm-debug.log
+
+# Database
+*.db
+
+# Certificati TLS locali (mkcert)
+/certs/*
+!/certs/.gitignore
+
+# System files
+.DS_Store
+Thumbs.db
