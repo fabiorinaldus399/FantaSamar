@@ -245,7 +245,7 @@ Crea una configurazione che serva i file statici del frontend e faccia da revers
 sudo nano /etc/nginx/sites-available/fantasamar
 ```
 
-Contenuto:
+Contenuto (esempio con le porte standard 80/443; se il router usa porte non standard per il port forwarding — es. perché la 80/443 sono già occupate dalla GUI del firewall — adatta le `listen` di conseguenza, vedi nota sotto):
 
 ```nginx
 server {
@@ -285,9 +285,84 @@ sudo nginx -t
 sudo systemctl reload nginx
 ```
 
+### Porte non standard (es. router con GUI di gestione su 80/443)
+
+Se il router/firewall (es. OPNsense) usa già le porte 80/443 pubbliche per la propria interfaccia di amministrazione, puoi far ascoltare nginx su porte diverse (es. `8080` per HTTP e `4443` per HTTPS) e configurare sul router un port forwarding dedicato:
+
+- WAN:8080 → `<ip-server>`:8080 (TCP) — usata anche dalla sfida ACME HTTP-01 di Certbot
+- WAN:4443 → `<ip-server>`:4443 (TCP) — servizio HTTPS pubblico dell'app
+
+In questo caso la configurazione nginx (vedi anche [deploy/nginx-fantasamar.conf](deploy/nginx-fantasamar.conf) nel repository) diventa:
+
+```nginx
+server {
+	listen 8080;
+	server_name tuo-dominio.it;
+
+	# Sfida ACME HTTP-01 per Certbot (validazione/rinnovo certificato)
+	location /.well-known/acme-challenge/ {
+		root /var/www/certbot;
+	}
+
+	# Redirect tutto il resto verso HTTPS sulla porta non standard
+	location / {
+		return 301 https://$host:4443$request_uri;
+	}
+}
+
+server {
+	listen 4443 ssl;
+	server_name tuo-dominio.it;
+
+	ssl_certificate     /etc/letsencrypt/live/tuo-dominio.it/fullchain.pem;
+	ssl_certificate_key /etc/letsencrypt/live/tuo-dominio.it/privkey.pem;
+	include /etc/letsencrypt/options-ssl-nginx.conf;
+	ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+	root /opt/fantasamar/FantaSamar/dist/FantaSamar/browser;
+	index index.html;
+
+	location / {
+		try_files $uri $uri/ /index.html;
+	}
+
+	location /api/ {
+		proxy_pass http://127.0.0.1:3000/api/;
+		proxy_http_version 1.1;
+		proxy_set_header Upgrade $http_upgrade;
+		proxy_set_header Connection 'upgrade';
+		proxy_set_header Host $host;
+		proxy_set_header X-Real-IP $remote_addr;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_set_header X-Forwarded-Proto $scheme;
+		proxy_cache_bypass $http_upgrade;
+	}
+}
+```
+
+Nota: con porte non standard, l'app sarà raggiungibile pubblicamente su `https://tuo-dominio.it:4443` (la porta va sempre specificata nell'URL, non è omissibile). Ricorda di aggiornare `CORS_ORIGIN` nel backend includendo la porta, es. `CORS_ORIGIN=https://tuo-dominio.it:4443`.
+
+Il file `/etc/letsencrypt/options-ssl-nginx.conf` e `/etc/letsencrypt/ssl-dhparams.pem` sono normalmente creati dal plugin `python3-certbot-nginx`; se non esistono (es. quando si usa `certbot certonly --webroot` invece del plugin nginx automatico), vanno creati manualmente prima del primo `nginx -t`:
+
+```bash
+sudo openssl dhparam -out /etc/letsencrypt/ssl-dhparams.pem 2048
+sudo tee /etc/letsencrypt/options-ssl-nginx.conf > /dev/null << 'EOF'
+ssl_session_cache shared:le_nginx_SSL:10m;
+ssl_session_timeout 1440m;
+ssl_session_tickets off;
+
+ssl_protocols TLSv1.2 TLSv1.3;
+ssl_prefer_server_ciphers off;
+
+ssl_ciphers 'ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384';
+EOF
+```
+
 ## 6. HTTPS con Let's Encrypt (consigliato)
 
-**Prerequisito**: il dominio (es. un dominio no-ip) deve risolvere verso l'IP pubblico del router/firewall e deve esserci il **port forwarding** delle porte 80 e 443 verso l'IP locale del server (es. il Raspberry Pi). Senza questo, Certbot non riesce a validare il dominio e la richiesta del certificato fallisce.
+**Prerequisito**: il dominio (es. un dominio no-ip) deve risolvere verso l'IP pubblico del router/firewall e deve esserci il **port forwarding** delle porte pubbliche verso il server (80/443, oppure 8080/4443 se si usano porte non standard come descritto sopra). Senza questo, Certbot non riesce a validare il dominio e la richiesta del certificato fallisce.
+
+**Caso standard (porte 80/443 libere)**, con il plugin nginx che configura tutto automaticamente:
 
 ```bash
 sudo apt install -y certbot python3-certbot-nginx
@@ -296,7 +371,20 @@ sudo certbot --nginx -d tuo-dominio.it
 
 Certbot configurerà automaticamente HTTPS e il rinnovo automatico del certificato, modificando `/etc/nginx/sites-available/fantasamar` per aggiungere i blocchi `listen 443 ssl` e il redirect da HTTP a HTTPS.
 
-Dopo aver ottenuto il certificato, se il backend usa `CORS_ORIGIN` esplicito (invece del rilevamento automatico LAN), aggiorna `.env` con l'origine pubblica definitiva (es. `CORS_ORIGIN=https://tuo-dominio.it`) e riavvia il backend (`pm2 restart fantasamar-server`).
+**Caso porte non standard (es. 8080/4443)**: il plugin `--nginx` presume le porte 80/443, quindi va usata la modalità `webroot`, che valida il dominio scrivendo un file temporaneo servito dalla `location /.well-known/acme-challenge/` già presente nella configurazione della sezione 5:
+
+```bash
+sudo apt install -y certbot python3-certbot-nginx
+sudo mkdir -p /var/www/certbot
+sudo certbot certonly --webroot -w /var/www/certbot -d tuo-dominio.it \
+  --non-interactive --agree-tos -m tua-email@esempio.it --no-eff-email
+```
+
+Il certificato viene salvato in `/etc/letsencrypt/live/tuo-dominio.it/` (`fullchain.pem` e `privkey.pem`), già referenziati nel blocco `listen 4443 ssl` della sezione 5. Dopo aver ottenuto il certificato la prima volta, esegui `nginx -t && sudo systemctl reload nginx` per applicarlo.
+
+Il rinnovo automatico è gestito dal timer systemd `certbot.timer`, installato insieme al pacchetto; per verificarlo: `systemctl list-timers certbot.timer`. Poiché la modalità `webroot` richiede che nginx sia già attivo e serva `/.well-known/acme-challenge/` sulla porta usata per la validazione (8080 nell'esempio), il rinnovo funziona automaticamente senza fermare nginx.
+
+Dopo aver ottenuto il certificato, se il backend usa `CORS_ORIGIN` esplicito (invece del rilevamento automatico LAN), aggiorna `.env` con l'origine pubblica definitiva, includendo la porta se non standard (es. `CORS_ORIGIN=https://tuo-dominio.it:4443`), e riavvia il backend (`pm2 restart fantasamar-server`).
 
 ## 7. Firewall
 
