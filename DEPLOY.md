@@ -235,7 +235,7 @@ npm install
 npm run build
 ```
 
-L'output compilato viene generato in `FantaSamar/dist/fanta-samar/browser` (il nome della sottocartella dipende dalla configurazione di Angular; verifica con `ls dist/`).
+L'output compilato viene generato in `FantaSamar/dist/FantaSamar/browser` (verifica con `ls dist/FantaSamar/`).
 
 ## 5. Configurazione di Nginx
 
@@ -252,7 +252,7 @@ server {
 	listen 80;
 	server_name tuo-dominio.it;
 
-	root /opt/fantasamar/FantaSamar/dist/fanta-samar/browser;
+	root /opt/fantasamar/FantaSamar/dist/FantaSamar/browser;
 	index index.html;
 
 	# Frontend Angular (SPA fallback)
@@ -287,24 +287,29 @@ sudo systemctl reload nginx
 
 ## 6. HTTPS con Let's Encrypt (consigliato)
 
+**Prerequisito**: il dominio (es. un dominio no-ip) deve risolvere verso l'IP pubblico del router/firewall e deve esserci il **port forwarding** delle porte 80 e 443 verso l'IP locale del server (es. il Raspberry Pi). Senza questo, Certbot non riesce a validare il dominio e la richiesta del certificato fallisce.
+
 ```bash
 sudo apt install -y certbot python3-certbot-nginx
 sudo certbot --nginx -d tuo-dominio.it
 ```
 
-Certbot configurerà automaticamente HTTPS e il rinnovo automatico del certificato.
+Certbot configurerà automaticamente HTTPS e il rinnovo automatico del certificato, modificando `/etc/nginx/sites-available/fantasamar` per aggiungere i blocchi `listen 443 ssl` e il redirect da HTTP a HTTPS.
+
+Dopo aver ottenuto il certificato, se il backend usa `CORS_ORIGIN` esplicito (invece del rilevamento automatico LAN), aggiorna `.env` con l'origine pubblica definitiva (es. `CORS_ORIGIN=https://tuo-dominio.it`) e riavvia il backend (`pm2 restart fantasamar-server`).
 
 ## 7. Firewall
 
-Se usi `ufw`:
+Su alcune distribuzioni minimali (es. Debian netinst) `ufw` non è installato di default; se il comando `ufw` non è disponibile non c'è un firewall applicativo attivo lato server e il traffico è filtrato solo dal router/firewall di rete. Per installarlo e abilitarlo:
 
 ```bash
+sudo apt install -y ufw
 sudo ufw allow 'Nginx Full'
 sudo ufw allow OpenSSH
 sudo ufw enable
 ```
 
-La porta 3000 del backend non deve essere esposta pubblicamente: deve rimanere raggiungibile solo da `localhost` tramite il proxy nginx.
+La porta 3000 del backend non deve essere esposta pubblicamente (né tramite `ufw` né tramite il port forwarding del router): deve rimanere raggiungibile solo da `localhost` tramite il proxy nginx. Il port forwarding sul router va configurato solo per le porte 80/443 verso il server.
 
 ## 8. Aggiornamenti futuri
 
