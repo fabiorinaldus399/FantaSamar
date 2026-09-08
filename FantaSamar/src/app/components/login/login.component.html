@@ -15,7 +15,7 @@
     <h1>🎵 FantaSAMAR 🧅</h1>
 
     <!-- Tab Selection -->
-    <div class="auth-tabs">
+    <div class="auth-tabs" *ngIf="showRegistration">
       <button
         [class.active]="isLogin"
         (click)="toggleMode()"

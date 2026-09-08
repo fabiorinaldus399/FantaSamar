@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
+import { FEATURE_FLAGS } from '../../config/feature-flags.config';
 
 @Component({
   selector: 'app-login',
@@ -12,6 +13,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
+  readonly showRegistration = FEATURE_FLAGS.showRegistration;
   isLogin = true;
   username = '';
   password = '';
@@ -42,6 +44,9 @@ export class LoginComponent implements OnInit {
   }
 
   toggleMode(): void {
+    if (!this.showRegistration) {
+      return;
+    }
     this.isLogin = !this.isLogin;
     this.resetForm();
   }

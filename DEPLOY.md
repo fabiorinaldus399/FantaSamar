@@ -227,6 +227,21 @@ export const API_BASE_URL = 'https://tuo-dominio.it/api';
 
 (oppure usa un path relativo `'/api'` se nginx fa da reverse proxy sullo stesso dominio, come nella configurazione proposta più sotto).
 
+### Feature flag
+
+Il file `FantaSamar/src/app/config/feature-flags.config.ts` permette di abilitare/disabilitare alcune funzionalità dell'app impostando semplici valori `true`/`false`, senza dover modificare i componenti:
+
+```ts
+export const FEATURE_FLAGS = {
+  showRegistration: true,       // Mostra la scheda "Registrazione" nella pagina di login
+  showCreateTeamButton: true,   // Mostra il pulsante/form "Crea Nuova Squadra" nella dashboard
+  showMyTeams: true,            // Mostra la sezione "Le Mie Squadre" nella dashboard
+  showTeamLeaderboard: true,    // Mostra la sezione "Classifica Squadre" nella dashboard
+};
+```
+
+Modifica i valori desiderati prima di eseguire la build di produzione (una modifica a questo file richiede sempre un rebuild del frontend, non è una variabile d'ambiente letta a runtime).
+
 ### Build di produzione
 
 ```bash

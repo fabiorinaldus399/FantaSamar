@@ -45,7 +45,7 @@
   <!-- Content -->
   <div class="dashboard-content">
     <!-- Create Team Section -->
-    <div class="create-team-section">
+    <div class="create-team-section" *ngIf="showCreateTeamButton">
       <button
         (click)="toggleCreateTeamForm()"
         class="create-team-button"
@@ -101,7 +101,7 @@
     </div>
 
     <!-- Teams List -->
-    <div class="teams-section">
+    <div class="teams-section" *ngIf="showMyTeams">
       <h2>Le Mie Squadre</h2>
 
       <div *ngIf="teams.length === 0" class="no-teams-message">
@@ -306,7 +306,7 @@
     </div>
 
     <!-- Leaderboard -->
-    <div class="leaderboard-section">
+    <div class="leaderboard-section" *ngIf="showTeamLeaderboard">
       <h2>🏆 Classifica Squadre</h2>
 
       <div *ngIf="leaderboard.length === 0" class="no-teams-message">

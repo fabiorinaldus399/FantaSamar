@@ -10,6 +10,7 @@ import { Team } from '../../models/team.model';
 import { SamarMember } from '../../models/samar-member.model';
 import { User } from '../../models/user.model';
 import { Action } from '../../models/action.model';
+import { FEATURE_FLAGS } from '../../config/feature-flags.config';
 
 @Component({
   selector: 'app-dashboard',
@@ -19,6 +20,9 @@ import { Action } from '../../models/action.model';
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit {
+  readonly showCreateTeamButton = FEATURE_FLAGS.showCreateTeamButton;
+  readonly showMyTeams = FEATURE_FLAGS.showMyTeams;
+  readonly showTeamLeaderboard = FEATURE_FLAGS.showTeamLeaderboard;
   user: User | null = null;
   teams: Team[] = [];
   otherTeams: Array<{team: Team, ownerName: string}> = [];
