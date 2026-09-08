@@ -616,7 +616,7 @@
   color: var(--text-on-accent);
   font-weight: bold;
   border-radius: 8px 8px 0 0;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .leaderboard-row {
@@ -703,7 +703,7 @@
 
 .owner-col {
   color: var(--text-secondary);
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .points-col {
@@ -712,7 +712,7 @@
 }
 
 .points-value {
-  font-size: 16px;
+  font-size: 20px;
   color: var(--accent-1);
 }
 
@@ -1462,8 +1462,8 @@
   .leaderboard-row {
     grid-template-columns: 40px 1fr 90px auto;
     gap: 8px;
-    padding: 10px;
-    font-size: 12px;
+    padding: 12px 10px;
+    font-size: 16px;
   }
 
   .owner-col {
@@ -1471,13 +1471,13 @@
   }
 
   .rank-badge {
-    width: 30px;
-    height: 30px;
-    font-size: 13px;
+    width: 34px;
+    height: 34px;
+    font-size: 16px;
   }
 
   .rank-badge.medal {
-    font-size: 22px;
+    font-size: 24px;
   }
 
   .team-card-header {
@@ -1499,12 +1499,12 @@
   .leaderboard-row {
     grid-template-columns: 32px 1fr 70px auto;
     gap: 6px;
-    padding: 8px;
-    font-size: 11px;
+    padding: 10px 8px;
+    font-size: 15px;
   }
 
   .points-value {
-    font-size: 13px;
+    font-size: 17px;
   }
 
   .view-button {
