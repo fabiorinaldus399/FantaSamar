@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
@@ -21,7 +21,11 @@ export class LoginComponent implements OnInit {
   rememberDevice = true;
   showRegisterSuccessOverlay = false;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     const savedUsername = localStorage.getItem('rememberedUsername');
@@ -72,6 +76,7 @@ export class LoginComponent implements OnInit {
         this.error = 'Username o password non validi';
         this.loading = false;
       }
+      this.cdr.detectChanges();
     });
   }
 
@@ -104,6 +109,7 @@ export class LoginComponent implements OnInit {
         this.error = 'Username già in uso';
         this.loading = false;
       }
+      this.cdr.detectChanges();
     });
   }
 
