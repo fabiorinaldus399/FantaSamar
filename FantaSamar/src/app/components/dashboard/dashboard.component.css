@@ -856,27 +856,25 @@
   box-shadow: 0 0 15px rgba(124, 143, 245, 0.25);
 }
 
-.member-role-badge {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: var(--accent-gradient);
-  color: var(--text-on-accent);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  font-size: 11px;
-  font-weight: bold;
-  line-height: 1.1;
-  padding: 4px;
-  margin: 0 auto 10px;
-}
-
 .member-card h4 {
-  margin: 10px 0 5px;
+  margin: 6px 0 4px;
   color: var(--text-primary);
   font-size: 17px;
+}
+
+.member-role-label {
+  display: block;
+  margin: 0 0 8px;
+  color: var(--accent-1);
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.member-card.selected .member-role-label {
+  color: var(--text-on-accent);
+  opacity: 0.85;
 }
 
 .member-card p {
@@ -1276,10 +1274,8 @@
     font-size: 16px;
   }
 
-  .member-role-badge {
-    width: 40px;
-    height: 40px;
-    font-size: 9px;
+  .member-role-label {
+    font-size: 11px;
   }
 
   .member-card h4 {
@@ -1346,10 +1342,8 @@
     font-size: 14px;
   }
 
-  .member-role-badge {
-    width: 35px;
-    height: 35px;
-    font-size: 8px;
+  .member-role-label {
+    font-size: 10px;
   }
 
   .member-card {
