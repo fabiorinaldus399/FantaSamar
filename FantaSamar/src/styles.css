@@ -16,10 +16,10 @@
      leggibili e distinguibili tra loro. */
   --bg-page: #1c1e2b;
   --bg-page-gradient: linear-gradient(135deg, #262a40 0%, #332a4d 100%);
-  --bg-surface: #2f3245;
-  --bg-surface-alt: #383c54;
-  --bg-surface-raised: #40445c;
-  --bg-hover: #4b5069;
+  --bg-surface: #2c2f42;
+  --bg-surface-alt: #363a52;
+  --bg-surface-raised: #4a4f6e;
+  --bg-hover: #565c7e;
 
   /* Text
      Contrasto maggiore rispetto al testo secondario/muted per restare leggibile
