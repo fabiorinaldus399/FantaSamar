@@ -984,6 +984,14 @@
   box-shadow: var(--shadow-accent);
 }
 
+.action-search-bar {
+  margin-top: 20px;
+}
+
+.action-search-input {
+  width: 100%;
+}
+
 .actions-list {
   margin-top: 20px;
 }

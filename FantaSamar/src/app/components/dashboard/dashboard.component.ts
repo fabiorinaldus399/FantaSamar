@@ -44,12 +44,22 @@ export class DashboardComponent implements OnInit {
   newActionType: 'positive' | 'negative' = 'positive';
   newActionScope: 'single' | 'group' = 'single';
 
+  actionSearchQuery = '';
+
   get bonusActions(): Action[] {
-    return this.actions.filter(a => a.points > 0);
+    return this.actions.filter(a => a.points > 0).filter(a => this.matchesActionSearch(a));
   }
 
   get malusActions(): Action[] {
-    return this.actions.filter(a => a.points < 0);
+    return this.actions.filter(a => a.points < 0).filter(a => this.matchesActionSearch(a));
+  }
+
+  private matchesActionSearch(action: Action): boolean {
+    const query = this.actionSearchQuery.trim().toLowerCase();
+    if (!query) {
+      return true;
+    }
+    return action.name.toLowerCase().includes(query);
   }
   actionPendingDeleteId: string | null = null;
   teamPendingDeleteId: string | null = null;
