@@ -4,42 +4,47 @@
   color-scheme: dark;
 
   /* Brand / accent */
-  --accent-1: #7c8ff5;
-  --accent-2: #8b5fc9;
+  --accent-1: #8b9dff;
+  --accent-2: #a179e0;
   --accent-gradient: linear-gradient(135deg, var(--accent-1) 0%, var(--accent-2) 100%);
-  --accent-soft: rgba(124, 143, 245, 0.16);
+  --accent-soft: rgba(139, 157, 255, 0.22);
 
-  /* Backgrounds */
-  --bg-page: #12131c;
-  --bg-page-gradient: linear-gradient(135deg, #1b1c2e 0%, #2a1f3d 100%);
-  --bg-surface: #1b1d2b;
-  --bg-surface-alt: #22243570;
-  --bg-surface-raised: #262a3d;
-  --bg-hover: #2c2f45;
+  /* Backgrounds
+     Livelli di superficie ben distinti tra loro (invece di grigi scuri molto simili),
+     così su schermi di telefono (spesso con contrasto/luminosità più bassi e un
+     eventuale "dark mode forzato" del sistema) le sezioni restano distinguibili. */
+  --bg-page: #14151f;
+  --bg-page-gradient: linear-gradient(135deg, #191a2b 0%, #241a38 100%);
+  --bg-surface: #21232f;
+  --bg-surface-alt: #262a3ecc;
+  --bg-surface-raised: #2e3245;
+  --bg-hover: #383c54;
 
-  /* Text */
-  --text-primary: #f2f3f8;
-  --text-secondary: #b3b6c9;
-  --text-muted: #7d81a0;
+  /* Text
+     Contrasto maggiore rispetto al testo secondario/muted per restare leggibile
+     anche su schermi piccoli o con luminosità ridotta. */
+  --text-primary: #f7f8fc;
+  --text-secondary: #c7cadd;
+  --text-muted: #9297b3;
   --text-on-accent: #ffffff;
 
   /* Borders */
-  --border-color: #363a52;
-  --border-color-strong: #454a6b;
+  --border-color: #454a68;
+  --border-color-strong: #5a6086;
 
   /* Semantic */
-  --color-success: #51cf66;
-  --color-success-strong: #2f9e44;
-  --color-danger: #ff6b6b;
-  --color-danger-strong: #e03131;
-  --color-warning: #ffc94d;
-  --color-warning-strong: #f59f00;
-  --color-info: #4dabf7;
+  --color-success: #63e07a;
+  --color-success-strong: #37b350;
+  --color-danger: #ff7b7b;
+  --color-danger-strong: #ef4444;
+  --color-warning: #ffd166;
+  --color-warning-strong: #f7a600;
+  --color-info: #5cb8ff;
 
   /* Shadows */
-  --shadow-soft: 0 5px 20px rgba(0, 0, 0, 0.35);
-  --shadow-medium: 0 10px 40px rgba(0, 0, 0, 0.5);
-  --shadow-accent: 0 4px 15px rgba(124, 143, 245, 0.35);
+  --shadow-soft: 0 5px 20px rgba(0, 0, 0, 0.4);
+  --shadow-medium: 0 10px 40px rgba(0, 0, 0, 0.55);
+  --shadow-accent: 0 4px 15px rgba(139, 157, 255, 0.4);
 }
 
 * {
