@@ -10,15 +10,16 @@
   --accent-soft: rgba(139, 157, 255, 0.22);
 
   /* Backgrounds
-     Livelli di superficie ben distinti tra loro (invece di grigi scuri molto simili),
-     così su schermi di telefono (spesso con contrasto/luminosità più bassi e un
-     eventuale "dark mode forzato" del sistema) le sezioni restano distinguibili. */
-  --bg-page: #14151f;
-  --bg-page-gradient: linear-gradient(135deg, #191a2b 0%, #241a38 100%);
-  --bg-surface: #21232f;
-  --bg-surface-alt: #262a3ecc;
-  --bg-surface-raised: #2e3245;
-  --bg-hover: #383c54;
+     Livelli di superficie ben distinti e sufficientemente chiari (invece di grigi
+     scuri quasi neri), così su schermi di telefono (spesso con contrasto/luminosità
+     più bassi e un eventuale "dark mode forzato" del sistema) le sezioni restano
+     leggibili e distinguibili tra loro. */
+  --bg-page: #1c1e2b;
+  --bg-page-gradient: linear-gradient(135deg, #262a40 0%, #332a4d 100%);
+  --bg-surface: #2f3245;
+  --bg-surface-alt: #383c54;
+  --bg-surface-raised: #40445c;
+  --bg-hover: #4b5069;
 
   /* Text
      Contrasto maggiore rispetto al testo secondario/muted per restare leggibile
