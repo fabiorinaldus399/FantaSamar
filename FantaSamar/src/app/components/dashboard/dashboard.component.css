@@ -895,13 +895,13 @@
 .member-card h4 {
   margin: 10px 0 5px;
   color: var(--text-primary);
-  font-size: 14px;
+  font-size: 17px;
 }
 
 .member-card p {
   margin: 0;
   color: var(--text-secondary);
-  font-size: 12px;
+  font-size: 15px;
 }
 
 /* Selected Member Section */
@@ -1042,23 +1042,23 @@
 .action-card h4 {
   margin: 0 0 8px 0;
   color: var(--text-primary);
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 600;
 }
 
 .action-description {
   margin: 0 0 10px 0;
   color: var(--text-secondary);
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.4;
 }
 
 .action-scope-badge {
   display: inline-block;
-  padding: 4px 8px;
+  padding: 5px 10px;
   background: var(--bg-hover);
   border-radius: 4px;
-  font-size: 11px;
+  font-size: 13px;
   color: var(--text-secondary);
   font-weight: 500;
   margin-bottom: 8px;
@@ -1082,7 +1082,7 @@
 .action-points {
   color: var(--text-primary);
   font-weight: 600;
-  font-size: 13px;
+  font-size: 16px;
 }
 
 .action-card.positive .action-points {
@@ -1099,12 +1099,12 @@
 }
 
 .apply-button {
-  padding: 5px 12px;
+  padding: 7px 14px;
   background: var(--accent-gradient);
   color: var(--text-on-accent);
   border: none;
   border-radius: 4px;
-  font-size: 12px;
+  font-size: 15px;
   cursor: pointer;
   transition: all 0.2s ease;
   font-weight: 500;
@@ -1121,12 +1121,12 @@
 }
 
 .delete-button {
-  padding: 5px 12px;
+  padding: 7px 14px;
   background: var(--color-danger);
   color: var(--text-on-accent);
   border: none;
   border-radius: 4px;
-  font-size: 12px;
+  font-size: 15px;
   cursor: pointer;
   transition: background 0.2s ease;
 }
@@ -1229,13 +1229,13 @@
 .selected-member-panel h3 {
   color: var(--accent-1);
   margin: 0 0 20px 0;
-  font-size: 18px;
+  font-size: 20px;
 }
 
 .actions-list h3 {
   color: var(--text-primary);
   margin: 20px 0 15px 0;
-  font-size: 16px;
+  font-size: 18px;
   padding-top: 20px;
   border-top: 2px solid var(--border-color);
 }
@@ -1296,11 +1296,11 @@
   }
 
   .member-card h4 {
-    font-size: 12px;
+    font-size: 15px;
   }
 
   .member-card p {
-    font-size: 10px;
+    font-size: 13px;
   }
 
   .actions-grid {
@@ -1344,7 +1344,7 @@
   .members-selection h3,
   .selected-member-panel h3,
   .actions-list h3 {
-    font-size: 16px;
+    font-size: 17px;
     margin-bottom: 12px;
   }
 
@@ -1364,12 +1364,12 @@
   }
 
   .member-card h4 {
-    font-size: 11px;
+    font-size: 14px;
     margin: 6px 0 2px;
   }
 
   .member-card p {
-    font-size: 9px;
+    font-size: 12px;
   }
 
   .create-action-button {
@@ -1419,8 +1419,8 @@
   }
 
   .delete-button {
-    padding: 6px 10px;
-    font-size: 11px;
+    padding: 7px 12px;
+    font-size: 14px;
   }
 
   .no-actions {
