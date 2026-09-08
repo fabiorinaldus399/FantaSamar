@@ -156,7 +156,7 @@
               class="member-card"
               (click)="selectMemberForActions(member)"
             >
-              <div class="member-avatar">{{ member.name.charAt(0) }}</div>
+              <div class="member-role-badge">{{ member.role }}</div>
               <h4>{{ member.name }}</h4>
               <p>{{ member.totalPoints || 0 }} 🧅</p>
             </div>
