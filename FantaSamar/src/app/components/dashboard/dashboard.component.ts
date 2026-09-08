@@ -23,6 +23,7 @@ export class DashboardComponent implements OnInit {
   teams: Team[] = [];
   otherTeams: Array<{team: Team, ownerName: string}> = [];
   leaderboard: Array<{rank: number, team: Team, ownerName: string, totalPoints: number}> = [];
+  memberLeaderboard: Array<{rank: number, member: SamarMember}> = [];
   members: SamarMember[] = [];
   allUsers: User[] = [];
   showCreateTeamForm = false;
@@ -65,6 +66,7 @@ export class DashboardComponent implements OnInit {
 
       this.samarService.getMembersObservable().subscribe(members => {
         this.members = members;
+        this.buildMemberLeaderboard(members);
         if (this.selectedMemberForActions) {
           const updated = members.find(m => m.id === this.selectedMemberForActions!.id);
           if (updated) {
@@ -239,6 +241,18 @@ export class DashboardComponent implements OnInit {
     });
 
     this.leaderboard = teamsWithPoints;
+  }
+
+  private buildMemberLeaderboard(members: SamarMember[]): void {
+    const membersWithPoints = members
+      .slice()
+      .sort((a, b) => (b.totalPoints || 0) - (a.totalPoints || 0))
+      .map((member, index) => ({
+        rank: index + 1,
+        member
+      }));
+
+    this.memberLeaderboard = membersWithPoints;
   }
 
   // Member Selection Modal Methods

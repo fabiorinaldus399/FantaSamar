@@ -274,7 +274,47 @@
 
     <!-- Leaderboard -->
     <div class="leaderboard-section">
-      <h2>🏆 Classifica Generale</h2>
+      <h2>🎵 Classifica SAMAR</h2>
+
+      <div *ngIf="memberLeaderboard.length === 0" class="no-teams-message">
+        <p>Nessun membro SAMAR disponibile.</p>
+      </div>
+
+      <div *ngIf="memberLeaderboard.length > 0" class="leaderboard-container">
+        <div class="leaderboard-table">
+          <div class="leaderboard-header">
+            <div class="rank-col">Pos.</div>
+            <div class="name-col">Membro</div>
+            <div class="owner-col">Ruolo</div>
+            <div class="points-col">Punti</div>
+          </div>
+
+          <div *ngFor="let entry of memberLeaderboard" class="leaderboard-row" [class.first]="entry.rank === 1" [class.second]="entry.rank === 2" [class.third]="entry.rank === 3">
+            <div class="rank-col">
+              <span class="rank-badge" [class.medal]="entry.rank <= 3">
+                <span *ngIf="entry.rank === 1" class="medal-icon">🥇</span>
+                <span *ngIf="entry.rank === 2" class="medal-icon">🥈</span>
+                <span *ngIf="entry.rank === 3" class="medal-icon">🥉</span>
+                <span *ngIf="entry.rank > 3">{{ entry.rank }}</span>
+              </span>
+            </div>
+            <div class="name-col">
+              <span class="team-name">{{ entry.member.name }}</span>
+            </div>
+            <div class="owner-col">
+              {{ entry.member.role }}
+            </div>
+            <div class="points-col">
+              <span class="points-value">{{ entry.member.totalPoints || 0 }}🧅</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Leaderboard -->
+    <div class="leaderboard-section">
+      <h2>🏆 Classifica Squadre</h2>
 
       <div *ngIf="leaderboard.length === 0" class="no-teams-message">
         <p>Nessuna squadra creata ancora.</p>
