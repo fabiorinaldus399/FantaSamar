@@ -43,6 +43,14 @@ export class DashboardComponent implements OnInit {
   newActionPoints = 0;
   newActionType: 'positive' | 'negative' = 'positive';
   newActionScope: 'single' | 'group' = 'single';
+
+  get bonusActions(): Action[] {
+    return this.actions.filter(a => a.points > 0);
+  }
+
+  get malusActions(): Action[] {
+    return this.actions.filter(a => a.points < 0);
+  }
   actionPendingDeleteId: string | null = null;
   teamPendingDeleteId: string | null = null;
   showApplyCelebration = false;

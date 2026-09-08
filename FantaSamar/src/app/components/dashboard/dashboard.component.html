@@ -223,13 +223,13 @@
           <div class="actions-list">
             <h3>Bonus Disponibili</h3>
 
-            <div *ngIf="actions.length === 0" class="no-actions">
+            <div *ngIf="bonusActions.length === 0" class="no-actions">
               <p>Nessun bonus disponibile</p>
             </div>
 
-            <div *ngIf="actions.length > 0" class="actions-grid">
+            <div *ngIf="bonusActions.length > 0" class="actions-grid">
               <div
-                *ngFor="let action of actions"
+                *ngFor="let action of bonusActions"
                 [class.positive]="action.points > 0"
                 [class.negative]="action.points < 0"
                 [class.group-action]="action.scope === 'group'"
@@ -254,6 +254,50 @@
                       (click)="deleteAction(action.id)"
                       class="delete-button"
                       title="Elimina bonus"
+                    >
+                      Elimina
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Existing Malus -->
+          <div class="actions-list">
+            <h3>Malus Disponibili</h3>
+
+            <div *ngIf="malusActions.length === 0" class="no-actions">
+              <p>Nessun malus disponibile</p>
+            </div>
+
+            <div *ngIf="malusActions.length > 0" class="actions-grid">
+              <div
+                *ngFor="let action of malusActions"
+                [class.positive]="action.points > 0"
+                [class.negative]="action.points < 0"
+                [class.group-action]="action.scope === 'group'"
+                class="action-card"
+              >
+                <h4>{{ action.name }}</h4>
+                <div class="action-scope-badge">
+                  {{ action.scope === 'single' ? '👤 Del Singolo' : '👥 Di Gruppo' }}
+                </div>
+                <div class="action-info">
+                  <span class="action-points">{{ action.points > 0 ? '+' : '' }}{{ action.points }} 🧅</span>
+                  <div class="action-buttons">
+                    <button
+                      (click)="applyAction(action)"
+                      class="apply-button"
+                      [disabled]="action.scope === 'single' && !selectedMemberForActions"
+                      title="Applica questo malus"
+                    >
+                      Applica
+                    </button>
+                    <button
+                      (click)="deleteAction(action.id)"
+                      class="delete-button"
+                      title="Elimina malus"
                     >
                       Elimina
                     </button>
