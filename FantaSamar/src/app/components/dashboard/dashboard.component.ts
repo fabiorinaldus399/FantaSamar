@@ -32,8 +32,6 @@ export class DashboardComponent implements OnInit {
   createTeamError = '';
   readonly maxTeamsPerUser = 2;
 
-  // Member Selection Modal
-  showMemberSelectionModal = false;
   selectedMemberForActions: SamarMember | null = null;
   actions: Action[] = [];
   showActionForm = false;
@@ -76,6 +74,11 @@ export class DashboardComponent implements OnInit {
         this.cdr.detectChanges();
       });
       this.samarService.loadMembers().subscribe();
+      this.actions = this.actionService.getActions();
+      this.actionService.loadActions().subscribe(actions => {
+        this.actions = actions;
+        this.cdr.detectChanges();
+      });
       this.loadTeams();
     });
   }
@@ -253,29 +256,6 @@ export class DashboardComponent implements OnInit {
       }));
 
     this.memberLeaderboard = membersWithPoints;
-  }
-
-  // Member Selection Modal Methods
-  openMemberSelectionModal(): void {
-    if (this.showMemberSelectionModal) {
-      this.closeMemberSelectionModal();
-      return;
-    }
-    this.showMemberSelectionModal = true;
-    this.samarService.loadMembers().subscribe(); // Ricarica tutti i 7 SAMAR (aggiorna via members$)
-    this.actions = this.actionService.getActions();
-    this.actionService.loadActions().subscribe(actions => {
-      this.actions = actions;
-      this.cdr.detectChanges();
-    });
-    this.cdr.detectChanges();
-  }
-
-  closeMemberSelectionModal(): void {
-    this.showMemberSelectionModal = false;
-    this.selectedMemberForActions = null;
-    this.resetActionForm();
-    this.cdr.detectChanges();
   }
 
   selectMemberForActions(member: SamarMember): void {
