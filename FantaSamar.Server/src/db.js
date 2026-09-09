@@ -98,6 +98,29 @@ function migrateDropEmailColumn() {
   `);
 }
 
+function migrateDropActionsDescriptionColumn() {
+  const columns = db.prepare("PRAGMA table_info(actions)").all();
+  const descriptionColumn = columns.find((col) => col.name === 'description');
+  if (!descriptionColumn) return;
+
+  db.exec(`
+    CREATE TABLE actions_new (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      points INTEGER NOT NULL,
+      type TEXT NOT NULL CHECK (type IN ('positive', 'negative')),
+      scope TEXT NOT NULL CHECK (scope IN ('single', 'group')),
+      createdBy TEXT NOT NULL,
+      createdAt TEXT NOT NULL,
+      isGlobal INTEGER NOT NULL DEFAULT 1
+    );
+    INSERT INTO actions_new (id, name, points, type, scope, createdBy, createdAt, isGlobal)
+    SELECT id, name, points, type, scope, createdBy, createdAt, isGlobal FROM actions;
+    DROP TABLE actions;
+    ALTER TABLE actions_new RENAME TO actions;
+  `);
+}
+
 function migrateLegacyTeamPointsToGlobal() {
   const globalCount = db.prepare('SELECT COUNT(*) as c FROM member_global_points').get().c;
   if (globalCount > 0) return;
@@ -227,6 +250,7 @@ function seedDefaultActions() {
 function initDatabase() {
   initSchema();
   migrateDropEmailColumn();
+  migrateDropActionsDescriptionColumn();
   seedSamarMembers();
   seedDefaultActions();
   migrateLegacyTeamPointsToGlobal();
