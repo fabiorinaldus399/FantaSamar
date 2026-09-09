@@ -221,7 +221,7 @@
 }
 
 .create-team-button:hover {
-  box-shadow: 0 6px 20px rgba(124, 143, 245, 0.5);
+  box-shadow: 0 6px 20px rgba(168, 50, 63, 0.5);
 }
 
 .create-team-button:disabled {
@@ -502,7 +502,7 @@
 
 .other-team-card:hover {
   border-left-color: var(--accent-1);
-  box-shadow: 0 5px 15px rgba(124, 143, 245, 0.25);
+  box-shadow: 0 5px 15px rgba(168, 50, 63, 0.25);
 }
 
 .team-header-other {
@@ -641,21 +641,21 @@
 
 .leaderboard-row:hover {
   background: var(--bg-hover);
-  box-shadow: 0 2px 8px rgba(124, 143, 245, 0.2);
+  box-shadow: 0 2px 8px rgba(168, 50, 63, 0.2);
 }
 
 .leaderboard-row.first {
-  background: linear-gradient(135deg, #3a3212 0%, #46370f 100%);
+  background: linear-gradient(135deg, #332120 0%, #3d1e21 100%);
   border-left: 4px solid var(--color-warning);
 }
 
 .leaderboard-row.second {
-  background: linear-gradient(135deg, #33354a 0%, #2b2d40 100%);
+  background: linear-gradient(135deg, #2a2626 0%, #232020 100%);
   border-left: 4px solid #c0c0c0;
 }
 
 .leaderboard-row.third {
-  background: linear-gradient(135deg, #3d2c1c 0%, #35251a 100%);
+  background: linear-gradient(135deg, #3a2620 0%, #32211c 100%);
   border-left: 4px solid #cd7f32;
 }
 
@@ -744,7 +744,7 @@
 }
 
 .view-button:hover:not(:disabled) {
-  box-shadow: 0 2px 8px rgba(124, 143, 245, 0.4);
+  box-shadow: 0 2px 8px rgba(168, 50, 63, 0.4);
 }
 
 .view-button:disabled {
@@ -865,8 +865,8 @@
 
 .member-card.selected {
   border-color: var(--accent-1);
-  background: linear-gradient(135deg, rgba(124, 143, 245, 0.16), rgba(139, 95, 201, 0.16));
-  box-shadow: 0 0 15px rgba(124, 143, 245, 0.25);
+  background: linear-gradient(135deg, rgba(168, 50, 63, 0.2), rgba(110, 27, 36, 0.2));
+  box-shadow: 0 0 15px rgba(168, 50, 63, 0.25);
 }
 
 .member-card h4 {
