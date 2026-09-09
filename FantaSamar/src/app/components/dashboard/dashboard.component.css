@@ -1147,6 +1147,61 @@
   background: var(--color-danger-strong);
 }
 
+.edit-button {
+  padding: 7px 14px;
+  background: var(--bg-surface-raised);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.edit-button:hover {
+  box-shadow: var(--shadow-accent);
+  border-color: var(--accent-1);
+}
+
+.edit-action-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.55);
+  animation: overlayFadeIn 0.2s ease;
+  padding: 16px;
+}
+
+.edit-action-overlay-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 30px 40px;
+  border-radius: 16px;
+  background: var(--bg-surface, #1f1f1f);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-soft);
+  animation: celebrationPop 0.2s ease;
+  max-width: 480px;
+  width: 100%;
+}
+
+.edit-action-overlay-content h3 {
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.edit-action-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
 .delete-confirm-inline {
   display: flex;
   flex-direction: column;

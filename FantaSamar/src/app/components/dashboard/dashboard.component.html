@@ -33,6 +33,65 @@
     </div>
   </div>
 
+  <!-- Edit Action Overlay -->
+  <div *ngIf="editingAction" class="edit-action-overlay">
+    <div class="edit-action-overlay-content">
+      <h3>Modifica Bonus</h3>
+
+      <div class="form-group">
+        <label for="editActionName">Nome Bonus</label>
+        <input
+          id="editActionName"
+          type="text"
+          [(ngModel)]="editActionName"
+          placeholder="Es: Goal, Assist, Cartellino..."
+          class="form-input"
+        />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="editActionType">Tipo</label>
+          <select id="editActionType" [(ngModel)]="editActionType" class="form-input">
+            <option value="positive">Positivo (+)</option>
+            <option value="negative">Negativo (-)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="editActionPoints">Cipolle</label>
+          <input
+            id="editActionPoints"
+            type="number"
+            [(ngModel)]="editActionPoints"
+            min="1"
+            class="form-input"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="editActionScope">Ambito</label>
+          <select id="editActionScope" [(ngModel)]="editActionScope" class="form-input">
+            <option value="single">Del Singolo</option>
+            <option value="group">Di Gruppo</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="edit-action-buttons">
+        <button (click)="saveEditAction()" class="create-button">
+          Salva Modifiche
+        </button>
+        <button (click)="deleteActionFromEdit()" class="delete-button">
+          Elimina Bonus
+        </button>
+        <button (click)="closeEditAction()" class="apply-button">
+          Annulla
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Header -->
   <div class="dashboard-header">
     <div class="dashboard-banner">
@@ -263,11 +322,11 @@
                       Applica
                     </button>
                     <button
-                      (click)="deleteAction(action.id)"
-                      class="delete-button"
-                      title="Elimina bonus"
+                      (click)="openEditAction(action)"
+                      class="edit-button"
+                      title="Modifica bonus"
                     >
-                      Elimina
+                      Modifica
                     </button>
                   </div>
                 </div>
@@ -307,11 +366,11 @@
                       Applica
                     </button>
                     <button
-                      (click)="deleteAction(action.id)"
-                      class="delete-button"
-                      title="Elimina malus"
+                      (click)="openEditAction(action)"
+                      class="edit-button"
+                      title="Modifica malus"
                     >
-                      Elimina
+                      Modifica
                     </button>
                   </div>
                 </div>

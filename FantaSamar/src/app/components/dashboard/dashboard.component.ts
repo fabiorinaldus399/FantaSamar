@@ -63,6 +63,11 @@ export class DashboardComponent implements OnInit {
   }
   actionPendingDeleteId: string | null = null;
   teamPendingDeleteId: string | null = null;
+  editingAction: Action | null = null;
+  editActionName = '';
+  editActionPoints = 0;
+  editActionType: 'positive' | 'negative' = 'positive';
+  editActionScope: 'single' | 'group' = 'single';
   showApplyCelebration = false;
   private celebrationTimeout: ReturnType<typeof setTimeout> | null = null;
   notifyMessage = '';
@@ -332,6 +337,60 @@ export class DashboardComponent implements OnInit {
         this.cdr.detectChanges();
       }
     });
+  }
+
+  openEditAction(action: Action): void {
+    this.editingAction = action;
+    this.editActionName = action.name;
+    this.editActionPoints = Math.abs(action.points);
+    this.editActionType = action.type;
+    this.editActionScope = action.scope;
+    this.cdr.detectChanges();
+  }
+
+  closeEditAction(): void {
+    this.editingAction = null;
+    this.cdr.detectChanges();
+  }
+
+  saveEditAction(): void {
+    if (!this.editingAction) return;
+
+    if (!this.editActionName.trim()) {
+      this.showNotify('Completa tutti i campi');
+      return;
+    }
+
+    if (!this.editActionPoints || this.editActionPoints <= 0) {
+      this.showNotify('Inserisci un numero di Cipolle maggiore di 0');
+      return;
+    }
+
+    const points = this.editActionType === 'positive' ? this.editActionPoints : -this.editActionPoints;
+
+    this.actionService.updateAction(this.editingAction.id, {
+      name: this.editActionName,
+      points,
+      type: this.editActionType,
+      scope: this.editActionScope
+    }).subscribe({
+      next: () => {
+        this.actions = this.actionService.getActions();
+        this.editingAction = null;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.showNotify(err?.error?.error || 'Errore durante la modifica del bonus');
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  deleteActionFromEdit(): void {
+    if (!this.editingAction) return;
+    this.actionPendingDeleteId = this.editingAction.id;
+    this.editingAction = null;
+    this.cdr.detectChanges();
   }
 
   deleteAction(actionId: string): void {
