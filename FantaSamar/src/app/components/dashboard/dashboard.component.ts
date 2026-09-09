@@ -303,6 +303,11 @@ export class DashboardComponent implements OnInit {
       return;
     }
 
+    if (!this.newActionPoints || this.newActionPoints <= 0) {
+      this.showNotify('Inserisci un numero di Cipolle maggiore di 0');
+      return;
+    }
+
     const user = this.authService.getCurrentUser();
     if (!user) return;
 
@@ -315,11 +320,17 @@ export class DashboardComponent implements OnInit {
       scope: this.newActionScope,
       createdBy: user.id,
       isGlobal: true
-    }).subscribe(() => {
-      this.actions = this.actionService.getActions();
-      this.resetActionForm();
-      this.showActionForm = false;
-      this.cdr.detectChanges();
+    }).subscribe({
+      next: () => {
+        this.actions = this.actionService.getActions();
+        this.resetActionForm();
+        this.showActionForm = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.showNotify(err?.error?.error || 'Errore durante la creazione del bonus');
+        this.cdr.detectChanges();
+      }
     });
   }
 
