@@ -35,7 +35,9 @@
 
   <!-- Header -->
   <div class="dashboard-header">
-    <h1>🎵 FantaSAMAR 🧅</h1>
+    <div class="dashboard-banner">
+      <img src="images/fantasamar-banner.jpg" alt="FantaSAMAR" class="dashboard-banner-image" />
+    </div>
     <div class="user-info">
       <span>Ciao, {{ user?.username }}!</span>
       <button (click)="logout()" class="logout-button">Logout</button>
