@@ -1041,7 +1041,7 @@
 
 .action-card.group-action {
   border-top: 3px solid var(--accent-1);
-  background: var(--bg-hover);
+  background: var(--bg-surface-alt);
 }
 
 .action-card:hover {
@@ -1067,17 +1067,19 @@
   display: inline-block;
   padding: 5px 10px;
   background: var(--bg-hover);
+  border: 1px solid var(--border-color-strong);
   border-radius: 4px;
   font-size: 13px;
-  color: var(--text-secondary);
-  font-weight: 500;
+  color: var(--text-primary);
+  font-weight: 600;
   margin-bottom: 8px;
   text-transform: uppercase;
 }
 
 .action-card.group-action .action-scope-badge {
-  background: rgba(77, 171, 247, 0.18);
-  color: var(--color-info);
+  background: rgba(168, 50, 63, 0.22);
+  border-color: var(--accent-1);
+  color: var(--text-primary);
 }
 
 .action-info {
