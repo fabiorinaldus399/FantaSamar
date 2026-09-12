@@ -98,6 +98,11 @@ StyleCopReport.xml
 *.svclog
 *.scc
 
+# SQLite database files (persistent runtime data, must not be tracked)
+FantaSamar.Server/fantasamar.db
+FantaSamar.Server/fantasamar.db-shm
+FantaSamar.Server/fantasamar.db-wal
+
 # Chutzpah Test files
 _Chutzpah*
 
