@@ -20,6 +20,19 @@ router.get('/:id', authenticateToken, (req, res) => {
   res.json({ ...member, totalPoints: globalPoints ? globalPoints.totalPoints : 0 });
 });
 
+// Cronologia di tutti i bonus/malus applicati a un membro, indipendente da qualsiasi squadra
+router.get('/:id/history', authenticateToken, (req, res) => {
+  const memberId = Number(req.params.id);
+  const member = db.prepare('SELECT * FROM samar_members WHERE id = ?').get(memberId);
+  if (!member) return res.status(404).json({ error: 'Membro non trovato' });
+
+  const records = db.prepare(
+    'SELECT actionId, actionName, points, appliedAt FROM member_action_records WHERE memberId = ? ORDER BY appliedAt DESC'
+  ).all(memberId);
+
+  res.json(records);
+});
+
 // Applica punti di un'azione a un membro (punteggio globale, indipendente dalla squadra)
 router.post('/:id/points', authenticateToken, (req, res) => {
   const memberId = Number(req.params.id);

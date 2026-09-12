@@ -135,6 +135,46 @@ export class DashboardComponent implements OnInit {
     }
   }
 
+  // Overlay per visualizzare tutti i bonus applicati a un membro (cronologia globale,
+  // indipendente da qualsiasi squadra a cui il membro appartenga)
+  showMemberBonusesOverlay = false;
+  selectedMemberBonuses: Array<{actionId: string, actionName: string, points: number, appliedAt: string}> = [];
+  selectedMemberForBonuses: SamarMember | null = null;
+  loadingMemberBonuses = false;
+
+  openMemberBonuses(member: SamarMember): void {
+    if (this.selectedMemberForBonuses?.id === member.id && this.showMemberBonusesOverlay) {
+      this.closeMemberBonuses();
+      return;
+    }
+
+    this.selectedMemberForBonuses = member;
+    this.showMemberBonusesOverlay = true;
+    this.loadingMemberBonuses = true;
+    this.selectedMemberBonuses = [];
+    this.cdr.detectChanges();
+
+    this.samarService.getMemberHistory(member.id).subscribe({
+      next: (history) => {
+        this.selectedMemberBonuses = history;
+        this.loadingMemberBonuses = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.loadingMemberBonuses = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  closeMemberBonuses(): void {
+    this.showMemberBonusesOverlay = false;
+    this.selectedMemberBonuses = [];
+    this.selectedMemberForBonuses = null;
+    this.loadingMemberBonuses = false;
+    this.cdr.detectChanges();
+  }
+
   private getUsernameById(userId: string): string | null {
     const user = this.allUsers.find(u => u.id === userId);
     return user ? user.username : null;

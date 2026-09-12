@@ -8,6 +8,37 @@
     </div>
   </div>
 
+  <!-- Member Bonuses Overlay -->
+  <div *ngIf="showMemberBonusesOverlay" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header" style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
+        <h2>Bonus applicati a {{ selectedMemberForBonuses?.name }}</h2>
+        <button class="close-button" (click)="closeMemberBonuses()">✕</button>
+      </div>
+      <div class="modal-body members-list-modal">
+        <div *ngIf="loadingMemberBonuses" class="no-actions">
+          <p>Caricamento in corso...</p>
+        </div>
+
+        <div *ngIf="!loadingMemberBonuses && selectedMemberBonuses.length === 0" class="no-actions">
+          <p>Nessun bonus applicato a questo membro.</p>
+        </div>
+
+        <div *ngIf="!loadingMemberBonuses && selectedMemberBonuses.length > 0" class="actions-grid">
+          <div *ngFor="let b of selectedMemberBonuses" class="action-card" [class.positive]="b.points>0" [class.negative]="b.points<0">
+            <h4>{{ b.actionName }}</h4>
+            <div class="action-info">
+              <div>
+                <div class="action-points">{{ b.points>0?'+':'' }}{{ b.points }} 🧅</div>
+                <div class="action-meta" style="font-size:12px; color:var(--text-secondary)">Applicato il: {{ b.appliedAt | date:'short' }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Notify Overlay -->
   <div *ngIf="notifyMessage" class="notify-overlay">
     <div class="notify-overlay-content">
@@ -407,7 +438,7 @@
               </span>
             </div>
             <div class="name-col">
-              <span class="team-name">{{ entry.member.name }}</span>
+              <button class="member-link team-name" (click)="openMemberBonuses(entry.member)">{{ entry.member.name }}</button>
             </div>
             <div class="owner-col">
               {{ entry.member.role }}

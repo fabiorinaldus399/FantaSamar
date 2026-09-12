@@ -48,5 +48,10 @@ export class SamarService {
       })
     );
   }
+
+  // Cronologia di tutti i bonus/malus applicati a un membro, indipendente da qualsiasi squadra
+  getMemberHistory(memberId: number): Observable<Array<{actionId: string, actionName: string, points: number, appliedAt: string}>> {
+    return this.http.get<Array<{actionId: string, actionName: string, points: number, appliedAt: string}>>(`${API_BASE_URL}/members/${memberId}/history`);
+  }
 }
 
